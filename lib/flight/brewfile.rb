@@ -26,7 +26,7 @@ module Flight
 
     def initialize(filename='./Brewfile')
       @filename = File.expand_path(filename)
-      @lockfile = Lockfile.new filename, existing_lockfile_data
+      @lockfile = Lockfile.new filename, lockfile_contents
       @packages = Package::Collection.new
       @taps = Tap::Collection.new
       @source_repository = DEFAULT_SOURCE
@@ -57,9 +57,9 @@ module Flight
 
     private
     def update_lockfile
-      lockfile.taps = tap_attributes
-      lockfile.packages = package_attributes
-      lockfile.taps.any? && lockfile.packages.any?
+      lockfile.taps = taps.to_json
+      lockfile.packages = packages.to_json
+      true
     end
 
     def write_lockfile

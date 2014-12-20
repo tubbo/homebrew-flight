@@ -1,5 +1,6 @@
 require 'flight/package/collection'
 require 'flight/package/options'
+require 'flight/package/version'
 
 module Flight
   # Represents a single Package in the Brewfile.
@@ -11,7 +12,7 @@ module Flight
     attr_accessor :name
 
     # Any build options to be passed in
-    attr_writer :options
+    attr_reader :options
 
     # Instantiate the object and assign any attributes.
     def initialize(arguments={})

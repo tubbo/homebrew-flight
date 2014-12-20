@@ -28,7 +28,7 @@ module Flight
             locked_at: Time.now.to_i,
             debug: (Flight.debug?) ? 'on' : 'off'
           },
-          taps: taps
+          taps: taps,
           packages: packages
         }
       end
