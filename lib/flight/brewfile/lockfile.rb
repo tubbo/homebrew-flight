@@ -51,6 +51,11 @@ module Flight
         valid? and write and exist?
       end
 
+      def update_attributes(with_new_attributes={})
+        @attributes = self.attributes.merge(with_new_attributes)
+        save
+      end
+
       private
       def write
         File.write path, to_json
