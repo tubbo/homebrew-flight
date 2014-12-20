@@ -29,6 +29,9 @@ module Flight
         @all << new_pkg
       end
 
+      def to_json
+        all.map(&:attributes).to_json
+      end
     end
   end
 end

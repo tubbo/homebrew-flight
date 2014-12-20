@@ -10,21 +10,27 @@ module Flight
     # The name of this package
     attr_accessor :name
 
-    # The version to install
-    attr_writer :version
-
     # Any build options to be passed in
     attr_writer :options
 
     # Instantiate the object and assign any attributes.
     def initialize(arguments={})
       @params = arguments
-      @options = Options.new params[:options]
+      @options = Options.new @params.delete(:options)
+      @version = Version.new @params.delete(:version)
 
       params.each do |key, value|
         setter = "#{key}="
         send setter, value if respond_to? setter
       end
+    end
+
+    def version=(new_version_string)
+      @version.string = new_version_string
+    end
+
+    def to_s
+      "#{name} at v#{version}"
     end
 
     # Render relevant attributes as a Hash.
@@ -43,11 +49,19 @@ module Flight
       end
     end
 
+    def has_version?
+      @version != '>= 0'
+    end
+
+    def requested_version
+      @version
+    end
+
     def version
-      if @version.empty?
-        current_version
+      if has_version?
+        requested_version
       else
-        @version.first
+        current_version
       end
     end
 
@@ -61,6 +75,10 @@ module Flight
     # version with the latest version from Homebrew's info command.
     def up_to_date?
       info.split("\n").first.include? version
+    end
+
+    def outdated?
+      (not up_to_date?)
     end
 
     private

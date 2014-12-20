@@ -12,7 +12,7 @@ module Flight
     def install
       update_brew and
       brewfile.packages.each { |pkg| use pkg } and
-      say("Your flight is complete!\nPackage resources have been installed to #{prefix}.")
+      say("Your flight is complete!\nPackages have been installed to #{prefix}.")
     end
 
     desc :update, "Update all Homebrew packages and edit the lockfile"
@@ -23,7 +23,7 @@ module Flight
     desc :update, "List all outdated Homebrew packages"
     def outdated
       update_brew and brewfile.packages.outdated.each do |pkg|
-        say "Using #{pkg.name} is #{pkg.current}, you have #{pkg.version}"
+        say "Current #{pkg.name} is #{pkg.current}, you have #{pkg.version}"
       end
     end
 
@@ -35,10 +35,10 @@ module Flight
     private
     def use(package)
       if package.installed?
-        say "Using #{package.name} (#{package.version})"
+        say "Using #{package}"
       else
         brew :install, "#{package.name} #{package.options}"
-        say "Installed #{package.name} (#{package.version})"
+        say "Installed #{package}"
       end
     end
 
@@ -47,6 +47,7 @@ module Flight
     end
 
     def update_brew
+      install_source unless brewfile.default_source?
       brewfile.taps.unknown.each { |package| brew :tap, tap }
       brew :update
     end
@@ -60,7 +61,18 @@ module Flight
     end
 
     def prefix
-      `brew --prefix`
+      `brew --prefix`.strip
     end
+
+    private
+    def install_source
+      system %[
+        cd $(brew --prefix) &&
+        git remote rm flight-source;
+        git remote add flight-source #{brewfile.source_repository} &&
+        git branch --set-upstream-to=flight-source/master &&
+        git fetch flight-source
+      ] or raise "Source '#{brewfile.source_repository}' could not be loaded."
+     end
   end
 end

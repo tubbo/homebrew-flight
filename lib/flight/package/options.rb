@@ -13,7 +13,7 @@ module Flight
       def to_s
         @hash.map { |key, value|
           option = key.to_s.gsub(/_/, '-')
-          if value.is_a? Boolean
+          if !!value == value
             value ? "--#{option}" : "--no-#{option}"
           else
             "--#{option}=#{value}"

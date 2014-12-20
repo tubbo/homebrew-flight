@@ -1,38 +1,26 @@
 # Flight
 
+**WARNING:** Flight is untested and probably doesn't work.
+
 Flight helps manage your Homebrew packages in the same way
-[Bundler][bundler] helps you manage gem dependencies. With your
+[Bundler][bundle] helps you manage gem dependencies. With your
 `Brewfile`, you can tell Homebrew to install packages, configure build
 options, and even install custom taps.
 
 ## Installation
 
-The best way is to install with Homebrew, using my Homebrew tap. Install
-the tap by running the following command:
-
-```bash
-$ brew tap tubbo/homebrew-tap
-```
-
-Now, all you have to do to install flight is:
-
-```bash
-$ brew install flight
-$ flight --version
-Flight v0.0.1
-```
-
-You can also include it as a dependency in your Ruby project with
-Bundler. Just add this line to Gemfile and run `bundle`:
-
-```ruby
-gem 'flight'
-```
-
-Or, you can install it as a RubyGem with:
+Flight is a RubyGem, and for now you can only install it _with_
+RubyGems:
 
 ```bash
 $ gem install flight
+```
+
+You can also include it as a dependency in your Ruby project with
+Bundler. Just add this line to your Gemfile and run `bundle`:
+
+```ruby
+gem 'flight'
 ```
 
 ## Usage
@@ -45,8 +33,8 @@ $ flight generate
 ```
 
 Next, edit the Brewfile with the packages you want to install. You can
-specify version constraints in the same manner as Bundler and
-Berkshelf.
+specify version constraints in the same manner as [Bundler][bundle] and
+[Berkshelf][berks].
 
 ```ruby
 brew 'vim'
@@ -77,8 +65,13 @@ packages.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/flight/fork )
+All contributions must include tests.
+
+1. Fork it ( https://github.com/tubbo/flight/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+[bundle]: http://bundler.io
+[berks]: http://berkshelf.com

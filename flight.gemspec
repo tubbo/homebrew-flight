@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'flight/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "flight"
+  spec.name          = "brew-flight"
   spec.version       = Flight::VERSION
   spec.authors       = ["Tom Scott"]
   spec.email         = ["tscott@telvue.com"]
