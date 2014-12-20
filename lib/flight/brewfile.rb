@@ -43,28 +43,26 @@ module Flight
       instance_eval contents
     end
 
+    def lock
+      lockfile.update_attributes \
+        taps: taps.to_json,
+        packages: packages.to_json
+    end
+
     def changed?
-      lockfile.taps != taps.to_json || lockfile.packages != packages.to_json
+      taps_changed? || packages_changed?
+    end
+
+    def taps_changed?
+      lockfile.taps != taps.to_json
+    end
+
+    def packages_changed?
+      lockfile.packages != packages.to_json
     end
 
     def default_source?
       source_repository == DEFAULT_SOURCE
-    end
-
-    def lock
-      update_lockfile and write_lockfile
-    end
-
-    private
-    def update_lockfile
-      lockfile.taps = taps.to_json
-      lockfile.packages = packages.to_json
-      true
-    end
-
-    def write_lockfile
-      File.write lockfile.path, lockfile.to_json
-      lockfile.exist?
     end
 
     private

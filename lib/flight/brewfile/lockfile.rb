@@ -19,6 +19,8 @@ module Flight
         File.exist? path
       end
 
+      # Attributes for the lockfile include Flight metadata, taps and
+      # packages extracted as attributes for later re-use.
       def attributes
         @attributes ||= {
           flight: {
@@ -33,8 +35,25 @@ module Flight
         }
       end
 
+      # Parse attributes to JSON.
       def to_json
         attributes.to_json
+      end
+
+      # This Lockfile is valid if the JSON parse succeeds.
+      def valid?
+        !!to_json
+      rescue JSON::ParserError
+        false
+      end
+
+      def save
+        valid? and write and exist?
+      end
+
+      private
+      def write
+        File.write path, to_json
       end
     end
   end
