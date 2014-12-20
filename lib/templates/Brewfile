@@ -1,0 +1,33 @@
+# This is your Brewfile. Use the following command to install a new
+# package from Homebrew source:
+#
+#     brew 'git', '~> 2.2'
+#
+# You can also install packages from custom taps:
+#
+#     tap 'neovim/neovim'
+#
+#     brew 'neovim', HEAD: true
+#
+# Much like Bundler's `source`, you only need to specify a tap once.
+# It's installed the first time you add it and checked every time you
+# run `flight install`.
+#
+# Start by adding some packages and taps and run `flight install` to get
+# them on your system! Here's a few good packages to get you started:
+
+brew 'vim'
+brew 'git', '~> 2.2'
+brew 'chruby'
+brew 'ruby-install'
+brew 'zsh'
+brew 'postgresql'
+brew 'bats'
+brew 'hub'
+brew 'gist'
+brew 'the_silver_searcher'
+
+#tap 'tubbo/homebrew-tap'
+#brew 'rails-template'
+#brew 'antigen'
+#brew 'homer'
