@@ -1,4 +1,4 @@
-Copyright (c) 2014 Tom Scott
+Copyright (c) 2014 Tom Scott.
 
 MIT License
 
