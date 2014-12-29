@@ -2,7 +2,7 @@
 
 **WARNING:** Flight is untested and probably doesn't work.
 
-Flight helps manage your Homebrew packages in the same way
+Flight helps manage your [Homebrew][brew] packages in the same way
 [Bundler][bundle] helps you manage gem dependencies. With your
 `Brewfile`, you can tell Homebrew to install packages, configure build
 options, and even install custom taps.
@@ -75,3 +75,4 @@ All contributions must include tests.
 
 [bundle]: http://bundler.io
 [berks]: http://berkshelf.com
+[brew]: http://brew.sh
