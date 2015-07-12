@@ -8,71 +8,59 @@ module Flight
 
     source_root File.expand_path('../../templates', __FILE__)
 
-    desc :install, "Install Homebrew packages."
-    def install
-      update_brew and
-      brewfile.packages.each { |pkg| use pkg } and
-      say("Your flight is complete!\nPackages have been installed to #{prefix}.")
-    end
+    default_task :bundle
 
-    desc :update, "Update all Homebrew packages and edit the lockfile"
-    def update
-      update_brew and brewfile.packages.outdated.each { |pkg| use pkg }
-    end
+    desc :install, 'Install all configured packages'
+    method_option :kinds, type: :array, alias: '-k', default: %w(packages casks)
+    def bundle
+      say "Fetching Homebrew packages and casks..."
 
-    desc :update, "List all outdated Homebrew packages"
-    def outdated
-      update_brew and brewfile.packages.outdated.each do |pkg|
-        say "Current #{pkg.name} is #{pkg.current}, you have #{pkg.version}"
+      kinds = { 'brew' => 'packages', 'brew cask' => 'casks' }
+      kinds.delete('brew') unless options[:kinds].include('packages')
+      kinds.delete('brew cask') unless options[:kinds].include('casks')
+
+      kinds.each do |program, manifest|
+        File.open(File.expand_path("~/etc/brew/#{manifest}")).each_line.map do |formula|
+          formula.strip
+        end.each do |formula|
+          use formula, program
+        end
       end
+
+      say "Your flight is complete!"
+      say "Packages have been installed to #{prefix}."
     end
 
-    desc :generate, "Create a Brewfile in this directory."
-    def generate
-      template 'Brewfile', 'Brewfile'
+    desc 'package NAME', "Install a package"
+    method_option :cask, type: :boolean, default: false
+    def package(formula)
+      use formula
+    end
+
+    desc 'cask NAME', "Install a cask from Caskroom"
+    def cask(formula)
+      use formula, program: 'brew cask'
+    end
+
+    desc :init, "Initialize your home directory for use with Flight"
+    def init
+      system "mkdir -p ~/etc/brew"
+      system "brew list > ~/etc/brew/packages"
+      system "brew cask list > ~/etc/brew/casks"
+      say "Currently installed packages written to ~/etc/brew/packages and ~/etc/brew/casks"
     end
 
     private
-    def use(package)
-      if package.installed?
-        say "Using #{package}"
+    def use(formula, program: 'brew')
+      info = `#{program} info #{formula}`
+      version = info.split("\n").first.gsub(/#{formula}: /, '')
+
+      if info.include?('Not installed')
+        say "Installing #{formula} @ #{version}..."
+        system "#{program} install #{formula} 2&>1"
       else
-        brew :install, "#{package.name} #{package.options}"
-        say "Installed #{package}"
+        say "Using #{formula} #{version}"
       end
     end
-
-    def brewfile
-      @brewfile ||= Brewfile.parse!
-    end
-
-    def update_brew
-      install_source unless brewfile.default_source?
-      brewfile.taps.unknown.each { |package| brew :tap, tap }
-      brew :update
-    end
-
-    def brew(command, arguments='')
-      if Flight.debug?
-        run "brew #{command} #{arguments} --quiet"
-      else
-        system "brew #{command} #{arguments} --quiet"
-      end
-    end
-
-    def prefix
-      `brew --prefix`.strip
-    end
-
-    private
-    def install_source
-      system %[
-        cd $(brew --prefix) &&
-        git remote rm flight-source;
-        git remote add flight-source #{brewfile.source_repository} &&
-        git branch --set-upstream-to=flight-source/master &&
-        git fetch flight-source
-      ] or raise "Source '#{brewfile.source_repository}' could not be loaded."
-     end
   end
 end
