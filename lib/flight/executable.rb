@@ -1,6 +1,4 @@
 require 'thor'
-require 'flight'
-require 'flight/brewfile'
 
 module Flight
   class Executable < Thor
@@ -11,19 +9,26 @@ module Flight
     default_task :bundle
 
     desc :install, 'Install all configured packages'
-    method_option :kinds, type: :array, alias: '-k', default: %w(packages casks)
+    method_option :packages, type: :boolean, alias: '-p', default: false
+    method_option :casks, type: :boolean, alias: '-c', default: false
     def bundle
-      say "Fetching Homebrew packages and casks..."
+      kinds = if !options[:packages] && !options[:casks]
+        { 'brew' => 'packages', 'brew cask' => 'casks' }
+      elsif options[:packages]
+        { 'brew' => 'packages' }
+      elsif options[:casks]
+        { 'brew cask' => 'casks' }
+      else
+        raise "error: invalid selection"
+      end
 
-      kinds = { 'brew' => 'packages', 'brew cask' => 'casks' }
-      kinds.delete('brew') unless options[:kinds].include('packages')
-      kinds.delete('brew cask') unless options[:kinds].include('casks')
+      say "Fetching Homebrew #{kinds.values.join(' and ')}..."
 
       kinds.each do |program, manifest|
         File.open(File.expand_path("~/etc/brew/#{manifest}")).each_line.map do |formula|
           formula.strip
         end.each do |formula|
-          use formula, program
+          use formula, program: program
         end
       end
 
